@@ -292,7 +292,6 @@ Pesan: ${message}`;
   return (
     <div className="container">
       <header className="header">
-        
         <nav className="nav">
           <a onClick={() => scrollToElement("home")} className="nav-link">
             Home
@@ -304,7 +303,6 @@ Pesan: ${message}`;
             Menu
           </a>
 
-          
           <a onClick={() => scrollToElement("preorder")} className="nav-link">
             Pre-Order
           </a>
@@ -312,7 +310,6 @@ Pesan: ${message}`;
           <a onClick={() => scrollToElement("contact")} className="nav-link">
             Contact
           </a>
-
         </nav>
       </header>
 
@@ -361,8 +358,8 @@ Pesan: ${message}`;
               Cookies yang Bikin Hari Lebih Manis
             </h1>
             <p className="hero-subtitle">
-              Cookies terenak bakal hadir sebentar lagi! Dibuat dengan bahan
-              premium dan cinta untuk menemani setiap momen spesial kamu.
+              Cookies rumahan yang selalu bikin nagih, dibuat dari bahan
+              terjangkau tapi berkualitas
             </p>
             <div className="hero-buttons">
               <button
@@ -407,23 +404,17 @@ Pesan: ${message}`;
           <div className="about-grid">
             <div className="about-card">
               <div className="about-icon">🥇</div>
-              <h3>Bahan Premium</h3>
-              <p>
-                Menggunakan bahan-bahan pilihan berkualitas tinggi untuk rasa
-                terbaik
-              </p>
+              <h3>Bahan Pilihan</h3>
+              <p>Perpaduan bahan ekonomis dan kualitas terbaik di kelasnya.</p>
             </div>
             <div className="about-card">
               <div className="about-icon">👨‍🍳</div>
-              <h3>Resep Rahasia</h3>
-              <p>
-                Dibuat dengan resep spesial yang sudah teruji dan disukai banyak
-                orang
-              </p>
+              <h3>Resep Terbaik</h3>
+              <p>Resep pilihan yang membuat cookies selalu renyah & lembut</p>
             </div>
             <div className="about-card">
               <div className="about-icon">📦</div>
-              <h3>Kemasan Cantik</h3>
+              <h3>Kemasan yang unik</h3>
               <p>Packaging menarik, cocok untuk hadiah atau moment spesial</p>
             </div>
           </div>
@@ -721,7 +712,6 @@ Pesan: ${message}`;
                   >
                     📸 Instagram
                   </a>
-                
                 </div>
               </div>
             </div>
