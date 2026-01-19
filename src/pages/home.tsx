@@ -20,7 +20,7 @@ interface FormData {
 }
 
 const Home: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [] = useState<FormData>({
     name: "",
     email: "",
     message: "",
@@ -63,13 +63,7 @@ const Home: React.FC = () => {
     },
   ];
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    const { name, value } = e.currentTarget;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+
 
   const toggleMenuItem = (item: MenuItem): void => {
     const exists = selectedItems.find((i) => i.id === item.id);
@@ -80,54 +74,6 @@ const Home: React.FC = () => {
     }
   };
 
-  const updateQuantity = (id: number, quantity: number): void => {
-    if (quantity < 1) return;
-    setSelectedItems(
-      selectedItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
-  };
-
-  const calculateTotal = (): number => {
-    return selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const sendWhatsApp = (): void => {
-    const adminPhone = "6285722778899";
-    let message = "Halo Mansookie! 🍪\n\n";
-    message += "Saya ingin melakukan pre-order:\n\n";
-
-    selectedItems.forEach((item) => {
-      message += `📍 ${item.name}\n`;
-      message += `   Qty: ${item.quantity} x Rp${item.price.toLocaleString("id-ID")}\n`;
-      message += `   Subtotal: Rp${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;
-    });
-
-    message += `Total: Rp${calculateTotal().toLocaleString("id-ID")}\n\n`;
-    message += `Nama: ${formData.name}\n`;
-    message += `Email: ${formData.email}\n`;
-    message += `Pesan: ${formData.message}\n\n`;
-    message += `Mohon konfirmasi untuk pesanan saya. Terima kasih!`;
-
-    const encodedMessage = encodeURIComponent(message);
-    window.open(
-      `https://wa.me/${adminPhone}?text=${encodedMessage}`,
-      "_blank"
-    );
-  };
-
-  const handlePreOrder = (): void => {
-    if (!formData.name || !formData.email) {
-      alert("Mohon isi nama dan email terlebih dahulu");
-      return;
-    }
-    if (selectedItems.length === 0) {
-      alert("Pilih minimal 1 menu");
-      return;
-    }
-    sendWhatsApp();
-  };
 
   const scrollToElement = (elementId: string): void => {
     const element = document.getElementById(elementId);
