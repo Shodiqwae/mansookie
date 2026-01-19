@@ -716,15 +716,6 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-.menu-image {
-  position: relative;
-  background: linear-gradient(135deg, #fdf8f3 0%, #f5ede3 100%);
-  padding: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 /* ==========================================
    CSS UNTUK GAMBAR MENU
    ========================================== */
@@ -736,7 +727,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 250px; /* Tentukan tinggi konsisten */
+  height: 300px; /* Tentukan tinggi konsisten */
   overflow: hidden;
 }
 
@@ -782,7 +773,11 @@
   }
 
   .menu-item-image {
-    object-fit: cover;
+    width:600%; /* DIKECILKAN KE600% */
+    height:600%; /* DIKECILKAN KE600% */
+    object-fit: cover; /* GANTI KE CONTAIN AGAR TIDAK CROP */
+    object-position: center;
+    border-radius: 0;
   }
 
   .cookie-svg {
