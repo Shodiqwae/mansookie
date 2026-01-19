@@ -26,13 +26,131 @@ const Home: React.FC = () => {
     message: "",
   });
 
+  const [preorderForm, setPreorderForm] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    notes: "",
+  });
+
+  const updateQuantity = (id: number, change: number) => {
+    setSelectedItems(
+      selectedItems.map((item) => {
+        if (item.id === id) {
+          const newQty = Math.max(1, item.quantity + change);
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      }),
+    );
+  };
+
+  const removeItem = (id: number) => {
+    setSelectedItems(selectedItems.filter((item) => item.id !== id));
+  };
+
+  const calculateTotal = () => {
+    return selectedItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    );
+  };
+
+  const handlePreorderSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (selectedItems.length === 0) {
+      alert("Silakan pilih menu terlebih dahulu!");
+      return;
+    }
+
+    // Format daftar pesanan
+    const orderList = selectedItems
+      .map(
+        (item) =>
+          `• ${item.name} (${item.quantity}x) - Rp${(item.price * item.quantity).toLocaleString("id-ID")}`,
+      )
+      .join("\n");
+
+    const total = calculateTotal();
+
+    // Format pesan WhatsApp
+    const whatsappMessage = `🍪 *PRE-ORDER MANSOOKIE* 🍪
+
+📝 *Detail Pesanan:*
+${orderList}
+
+💰 *Total: Rp${total.toLocaleString("id-ID")}*
+
+👤 *Data Pemesan:*
+Nama: ${preorderForm.name}
+No. HP: ${preorderForm.phone}
+Alamat: ${preorderForm.address}
+${preorderForm.notes ? `Catatan: ${preorderForm.notes}` : ""}
+
+Terima kasih telah memesan di Mansookie! 🙏`;
+
+    // Nomor WhatsApp
+    const phoneNumber = "6289691361617";
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    // Buka WhatsApp
+    window.open(whatsappUrl, "_blank");
+
+    // Reset form dan cart
+    setPreorderForm({ name: "", phone: "", address: "", notes: "" });
+    setSelectedItems([]);
+
+    alert("Pesanan Anda akan dikirim ke WhatsApp!");
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const name = (form.elements.namedItem("contact-name") as HTMLInputElement)
+      .value;
+    const email = (form.elements.namedItem("contact-email") as HTMLInputElement)
+      .value;
+    const message = (
+      form.elements.namedItem("contact-message") as HTMLTextAreaElement
+    ).value;
+
+    // Nomor WhatsApp (format: 62xxxxxxxxxx tanpa 0)
+    const phoneNumber = "6289691361617";
+
+    // Format pesan
+    const whatsappMessage = `Halo Mansookie! 👋
+
+Nama: ${name}
+Email: ${email}
+Pesan: ${message}`;
+
+    // Buat URL WhatsApp
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    // Buka WhatsApp
+    window.open(whatsappUrl, "_blank");
+
+    // Reset form
+    form.reset();
+
+    // Alert konfirmasi
+    alert(
+      "Terima kasih! Kami akan membuka WhatsApp untuk melanjutkan percakapan.",
+    );
+  };
+
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
 
   const menuItems: MenuItem[] = [
     {
       id: 1,
       name: "Classic Chocolate Chip",
-      description: "Cookies klasik dengan chocolate chip premium yang melumer di mulut",
+      description:
+        "Cookies klasik dengan chocolate chip premium yang melumer di mulut",
       price: 15000,
       badge: "BESTSELLER",
       badgeColor: "bestseller",
@@ -40,7 +158,8 @@ const Home: React.FC = () => {
     {
       id: 2,
       name: "Double Choco Brownies",
-      description: "Kombinasi sempurna coklat gelap dan coklat susu, super fudgy",
+      description:
+        "Kombinasi sempurna coklat gelap dan coklat susu, super fudgy",
       price: 18000,
       badge: "NEW",
       badgeColor: "new",
@@ -48,7 +167,8 @@ const Home: React.FC = () => {
     {
       id: 3,
       name: "Matcha White Chocolate",
-      description: "Rasa matcha yang premium dengan white chocolate yang lembut",
+      description:
+        "Rasa matcha yang premium dengan white chocolate yang lembut",
       price: 20000,
       badge: "PREMIUM",
       badgeColor: "bestseller",
@@ -63,8 +183,6 @@ const Home: React.FC = () => {
     },
   ];
 
-
-
   const toggleMenuItem = (item: MenuItem): void => {
     const exists = selectedItems.find((i) => i.id === item.id);
     if (exists) {
@@ -73,7 +191,6 @@ const Home: React.FC = () => {
       setSelectedItems([...selectedItems, { ...item, quantity: 1 }]);
     }
   };
-
 
   const scrollToElement = (elementId: string): void => {
     const element = document.getElementById(elementId);
@@ -98,6 +215,16 @@ const Home: React.FC = () => {
           background-color: #f5ede3;
           min-height: 100vh;
         }
+
+        .btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-submit:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
 
         .header {
           display: flex;
@@ -961,10 +1088,18 @@ const Home: React.FC = () => {
       <header className="header">
         <div className="logo">@mansookie</div>
         <nav className="nav">
-          <a onClick={() => scrollToElement("home")} className="nav-link">Home</a>
-          <a onClick={() => scrollToElement("about")} className="nav-link">About</a>
-          <a onClick={() => scrollToElement("menu")} className="nav-link">Menu</a>
-          <a onClick={() => scrollToElement("contact")} className="nav-link">Contact</a>
+          <a onClick={() => scrollToElement("home")} className="nav-link">
+            Home
+          </a>
+          <a onClick={() => scrollToElement("about")} className="nav-link">
+            About
+          </a>
+          <a onClick={() => scrollToElement("menu")} className="nav-link">
+            Menu
+          </a>
+          <a onClick={() => scrollToElement("contact")} className="nav-link">
+            Contact
+          </a>
         </nav>
       </header>
 
@@ -976,12 +1111,14 @@ const Home: React.FC = () => {
               Cookies yang Bikin Hari Lebih Manis
             </h1>
             <p className="hero-subtitle">
-              Cookies terenak bakal hadir sebentar lagi! Dibuat dengan bahan premium 
-              dan cinta untuk menemani setiap momen spesial kamu.
+              Cookies terenak bakal hadir sebentar lagi! Dibuat dengan bahan
+              premium dan cinta untuk menemani setiap momen spesial kamu.
             </p>
             <div className="hero-buttons">
-              
-              <button className="btn-secondary" onClick={() => scrollToElement("menu")}>
+              <button
+                className="btn-secondary"
+                onClick={() => scrollToElement("menu")}
+              >
                 Lihat Menu
               </button>
             </div>
@@ -1005,55 +1142,118 @@ const Home: React.FC = () => {
               <circle cx="350" cy="80" r="30" fill="#ff4500" opacity="0.1" />
               <circle cx="50" cy="300" r="40" fill="#ff6b35" opacity="0.1" />
               <circle cx="320" cy="350" r="25" fill="#ff4500" opacity="0.15" />
-              
+
               <g className="cookie-stack">
-                <ellipse cx="200" cy="100" rx="80" ry="15" fill="#8B6F47" opacity="0.3"/>
-                <ellipse cx="200" cy="95" rx="85" ry="18" fill="#D4A574"/>
-                <circle cx="180" cy="95" r="8" fill="#5C4033"/>
-                <circle cx="210" cy="92" r="7" fill="#5C4033"/>
-                <circle cx="200" cy="100" r="6" fill="#5C4033"/>
-                <circle cx="225" cy="95" r="7" fill="#5C4033"/>
-                
-                <ellipse cx="200" cy="145" rx="82" ry="16" fill="#8B6F47" opacity="0.3"/>
-                <ellipse cx="200" cy="140" rx="90" ry="20" fill="#E0B589"/>
-                <circle cx="170" cy="140" r="9" fill="#5C4033"/>
-                <circle cx="200" cy="138" r="8" fill="#5C4033"/>
-                <circle cx="230" cy="142" r="8" fill="#5C4033"/>
-                <circle cx="215" cy="145" r="7" fill="#5C4033"/>
-                <circle cx="185" cy="145" r="7" fill="#5C4033"/>
-                
-                <ellipse cx="200" cy="195" rx="85" ry="17" fill="#8B6F47" opacity="0.3"/>
-                <ellipse cx="200" cy="190" rx="95" ry="22" fill="#D4A574"/>
-                <circle cx="175" cy="190" r="10" fill="#5C4033"/>
-                <circle cx="205" cy="188" r="9" fill="#5C4033"/>
-                <circle cx="235" cy="192" r="9" fill="#5C4033"/>
-                <circle cx="190" cy="195" r="8" fill="#5C4033"/>
-                <circle cx="220" cy="193" r="8" fill="#5C4033"/>
-                
-                <ellipse cx="200" cy="250" rx="88" ry="18" fill="#8B6F47" opacity="0.3"/>
-                <ellipse cx="200" cy="245" rx="98" ry="24" fill="#E0B589"/>
-                <circle cx="165" cy="245" r="10" fill="#5C4033"/>
-                <circle cx="195" cy="243" r="9" fill="#5C4033"/>
-                <circle cx="225" cy="247" r="10" fill="#5C4033"/>
-                <circle cx="180" cy="250" r="8" fill="#5C4033"/>
-                <circle cx="210" cy="248" r="9" fill="#5C4033"/>
-                <circle cx="240" cy="245" r="8" fill="#5C4033"/>
-                
-                <ellipse cx="200" cy="310" rx="90" ry="20" fill="#8B6F47" opacity="0.3"/>
-                <ellipse cx="200" cy="305" rx="100" ry="25" fill="#D4A574"/>
-                <circle cx="160" cy="305" r="11" fill="#5C4033"/>
-                <circle cx="190" cy="303" r="10" fill="#5C4033"/>
-                <circle cx="220" cy="307" r="11" fill="#5C4033"/>
-                <circle cx="175" cy="310" r="9" fill="#5C4033"/>
-                <circle cx="205" cy="308" r="10" fill="#5C4033"/>
-                <circle cx="235" cy="305" r="9" fill="#5C4033"/>
-                <circle cx="250" cy="308" r="8" fill="#5C4033"/>
+                <ellipse
+                  cx="200"
+                  cy="100"
+                  rx="80"
+                  ry="15"
+                  fill="#8B6F47"
+                  opacity="0.3"
+                />
+                <ellipse cx="200" cy="95" rx="85" ry="18" fill="#D4A574" />
+                <circle cx="180" cy="95" r="8" fill="#5C4033" />
+                <circle cx="210" cy="92" r="7" fill="#5C4033" />
+                <circle cx="200" cy="100" r="6" fill="#5C4033" />
+                <circle cx="225" cy="95" r="7" fill="#5C4033" />
+
+                <ellipse
+                  cx="200"
+                  cy="145"
+                  rx="82"
+                  ry="16"
+                  fill="#8B6F47"
+                  opacity="0.3"
+                />
+                <ellipse cx="200" cy="140" rx="90" ry="20" fill="#E0B589" />
+                <circle cx="170" cy="140" r="9" fill="#5C4033" />
+                <circle cx="200" cy="138" r="8" fill="#5C4033" />
+                <circle cx="230" cy="142" r="8" fill="#5C4033" />
+                <circle cx="215" cy="145" r="7" fill="#5C4033" />
+                <circle cx="185" cy="145" r="7" fill="#5C4033" />
+
+                <ellipse
+                  cx="200"
+                  cy="195"
+                  rx="85"
+                  ry="17"
+                  fill="#8B6F47"
+                  opacity="0.3"
+                />
+                <ellipse cx="200" cy="190" rx="95" ry="22" fill="#D4A574" />
+                <circle cx="175" cy="190" r="10" fill="#5C4033" />
+                <circle cx="205" cy="188" r="9" fill="#5C4033" />
+                <circle cx="235" cy="192" r="9" fill="#5C4033" />
+                <circle cx="190" cy="195" r="8" fill="#5C4033" />
+                <circle cx="220" cy="193" r="8" fill="#5C4033" />
+
+                <ellipse
+                  cx="200"
+                  cy="250"
+                  rx="88"
+                  ry="18"
+                  fill="#8B6F47"
+                  opacity="0.3"
+                />
+                <ellipse cx="200" cy="245" rx="98" ry="24" fill="#E0B589" />
+                <circle cx="165" cy="245" r="10" fill="#5C4033" />
+                <circle cx="195" cy="243" r="9" fill="#5C4033" />
+                <circle cx="225" cy="247" r="10" fill="#5C4033" />
+                <circle cx="180" cy="250" r="8" fill="#5C4033" />
+                <circle cx="210" cy="248" r="9" fill="#5C4033" />
+                <circle cx="240" cy="245" r="8" fill="#5C4033" />
+
+                <ellipse
+                  cx="200"
+                  cy="310"
+                  rx="90"
+                  ry="20"
+                  fill="#8B6F47"
+                  opacity="0.3"
+                />
+                <ellipse cx="200" cy="305" rx="100" ry="25" fill="#D4A574" />
+                <circle cx="160" cy="305" r="11" fill="#5C4033" />
+                <circle cx="190" cy="303" r="10" fill="#5C4033" />
+                <circle cx="220" cy="307" r="11" fill="#5C4033" />
+                <circle cx="175" cy="310" r="9" fill="#5C4033" />
+                <circle cx="205" cy="308" r="10" fill="#5C4033" />
+                <circle cx="235" cy="305" r="9" fill="#5C4033" />
+                <circle cx="250" cy="308" r="8" fill="#5C4033" />
               </g>
-              
-              <circle cx="120" cy="150" r="4" fill="#D4A574" opacity="0.6" className="crumb crumb-1"/>
-              <circle cx="290" cy="200" r="5" fill="#E0B589" opacity="0.6" className="crumb crumb-2"/>
-              <circle cx="100" cy="250" r="3" fill="#D4A574" opacity="0.6" className="crumb crumb-3"/>
-              <circle cx="310" cy="280" r="4" fill="#E0B589" opacity="0.6" className="crumb crumb-4"/>
+
+              <circle
+                cx="120"
+                cy="150"
+                r="4"
+                fill="#D4A574"
+                opacity="0.6"
+                className="crumb crumb-1"
+              />
+              <circle
+                cx="290"
+                cy="200"
+                r="5"
+                fill="#E0B589"
+                opacity="0.6"
+                className="crumb crumb-2"
+              />
+              <circle
+                cx="100"
+                cy="250"
+                r="3"
+                fill="#D4A574"
+                opacity="0.6"
+                className="crumb crumb-3"
+              />
+              <circle
+                cx="310"
+                cy="280"
+                r="4"
+                fill="#E0B589"
+                opacity="0.6"
+                className="crumb crumb-4"
+              />
             </svg>
           </div>
         </div>
@@ -1066,12 +1266,18 @@ const Home: React.FC = () => {
             <div className="about-card">
               <div className="about-icon">🥇</div>
               <h3>Bahan Premium</h3>
-              <p>Menggunakan bahan-bahan pilihan berkualitas tinggi untuk rasa terbaik</p>
+              <p>
+                Menggunakan bahan-bahan pilihan berkualitas tinggi untuk rasa
+                terbaik
+              </p>
             </div>
             <div className="about-card">
               <div className="about-icon">👨‍🍳</div>
               <h3>Resep Rahasia</h3>
-              <p>Dibuat dengan resep spesial yang sudah teruji dan disukai banyak orang</p>
+              <p>
+                Dibuat dengan resep spesial yang sudah teruji dan disukai banyak
+                orang
+              </p>
             </div>
             <div className="about-card">
               <div className="about-icon">📦</div>
@@ -1085,40 +1291,210 @@ const Home: React.FC = () => {
       <section className="menu" id="menu">
         <div className="menu-content">
           <h2 className="section-title">Menu Pilihan Kami</h2>
-          <p className="menu-subtitle">Pilih cookies favorit kamu dan jadilah yang pertama merasakan kelezatannya</p>
+          <p className="menu-subtitle">
+            Pilih cookies favorit kamu dan jadilah yang pertama merasakan
+            kelezatannya
+          </p>
           <div className="menu-grid">
             {menuItems.map((item) => (
               <div key={item.id} className="menu-card">
                 <div className="menu-image">
                   <svg viewBox="0 0 200 200" className="cookie-svg">
-                    <circle cx="100" cy="100" r="75" fill="#D4A574"/>
-                    <circle cx="100" cy="100" r="70" fill="#E0B589"/>
-                    <circle cx="80" cy="85" r="12" fill="#5C4033"/>
-                    <circle cx="120" cy="80" r="11" fill="#5C4033"/>
-                    <circle cx="100" cy="105" r="10" fill="#5C4033"/>
-                    <circle cx="75" cy="115" r="9" fill="#5C4033"/>
-                    <circle cx="130" cy="110" r="10" fill="#5C4033"/>
+                    <circle cx="100" cy="100" r="75" fill="#D4A574" />
+                    <circle cx="100" cy="100" r="70" fill="#E0B589" />
+                    <circle cx="80" cy="85" r="12" fill="#5C4033" />
+                    <circle cx="120" cy="80" r="11" fill="#5C4033" />
+                    <circle cx="100" cy="105" r="10" fill="#5C4033" />
+                    <circle cx="75" cy="115" r="9" fill="#5C4033" />
+                    <circle cx="130" cy="110" r="10" fill="#5C4033" />
                   </svg>
                 </div>
-                <div className={`menu-badge ${item.badgeColor}`}>{item.badge}</div>
+                <div className={`menu-badge ${item.badgeColor}`}>
+                  {item.badge}
+                </div>
                 <div className="menu-info">
                   <h3>{item.name}</h3>
                   <p>{item.description}</p>
                   <div className="menu-footer">
                     <div className="menu-price">
-                      <span className="price">Rp{item.price.toLocaleString("id-ID")}</span>
+                      <span className="price">
+                        Rp{item.price.toLocaleString("id-ID")}
+                      </span>
                       <span className="unit">/box</span>
                     </div>
-                    <button 
-                      className={`btn-add ${selectedItems.find(i => i.id === item.id) ? 'active' : ''}`}
+                    <button
+                      className={`btn-add ${selectedItems.find((i) => i.id === item.id) ? "active" : ""}`}
                       onClick={() => toggleMenuItem(item)}
                     >
-                      {selectedItems.find(i => i.id === item.id) ? '✓ Dipilih' : '+ Pilih'}
+                      {selectedItems.find((i) => i.id === item.id)
+                        ? "✓ Dipilih"
+                        : "+ Pilih"}
                     </button>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="preorder-section" id="preorder">
+        <div className="preorder-container">
+          <h2 className="section-title">Pre-Order Sekarang</h2>
+          <div className="preorder-grid">
+            {/* Keranjang Belanja */}
+            <div className="preorder-left">
+              <h3 className="preorder-title">🛒 Keranjang Belanja</h3>
+
+              {selectedItems.length === 0 ? (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#666",
+                  }}
+                >
+                  <p>Belum ada item dipilih</p>
+                  <p style={{ fontSize: "14px", marginTop: "10px" }}>
+                    Pilih menu favorit kamu dari menu di atas
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="cart-items">
+                    {selectedItems.map((item) => (
+                      <div key={item.id} className="cart-item">
+                        <div className="cart-item-info">
+                          <div className="cart-item-name">{item.name}</div>
+                          <div className="cart-item-price">
+                            Rp{item.price.toLocaleString("id-ID")}
+                          </div>
+                        </div>
+
+                        <div className="quantity-control">
+                          <button
+                            className="qty-btn"
+                            onClick={() => updateQuantity(item.id, -1)}
+                          >
+                            -
+                          </button>
+                          <span className="qty-value">{item.quantity}</span>
+                          <button
+                            className="qty-btn"
+                            onClick={() => updateQuantity(item.id, 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          className="remove-btn"
+                          onClick={() => removeItem(item.id)}
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="cart-summary">
+                    <div className="summary-row">
+                      <span>Subtotal:</span>
+                      <span>Rp{calculateTotal().toLocaleString("id-ID")}</span>
+                    </div>
+                    <div className="summary-row total">
+                      <span>Total:</span>
+                      <span>Rp{calculateTotal().toLocaleString("id-ID")}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Form Pre-Order */}
+            <div className="preorder-right">
+              <h3 className="preorder-title">📋 Data Pemesan</h3>
+              <form onSubmit={handlePreorderSubmit}>
+                <div className="form-group">
+                  <label htmlFor="preorder-name">Nama Lengkap *</label>
+                  <input
+                    type="text"
+                    id="preorder-name"
+                    className="form-input"
+                    placeholder="Masukkan nama lengkap"
+                    value={preorderForm.name}
+                    onChange={(e) =>
+                      setPreorderForm({ ...preorderForm, name: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="preorder-phone">No. WhatsApp *</label>
+                  <input
+                    type="tel"
+                    id="preorder-phone"
+                    className="form-input"
+                    placeholder="08xx xxxx xxxx"
+                    value={preorderForm.phone}
+                    onChange={(e) =>
+                      setPreorderForm({
+                        ...preorderForm,
+                        phone: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="preorder-address">Alamat Lengkap *</label>
+                  <textarea
+                    id="preorder-address"
+                    className="form-textarea"
+                    placeholder="Masukkan alamat pengiriman"
+                    value={preorderForm.address}
+                    onChange={(e) =>
+                      setPreorderForm({
+                        ...preorderForm,
+                        address: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="preorder-notes">Catatan (Opsional)</label>
+                  <textarea
+                    id="preorder-notes"
+                    className="form-textarea"
+                    placeholder="Catatan tambahan untuk pesanan"
+                    value={preorderForm.notes}
+                    onChange={(e) =>
+                      setPreorderForm({
+                        ...preorderForm,
+                        notes: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn-submit"
+                  disabled={selectedItems.length === 0}
+                  style={{
+                    opacity: selectedItems.length === 0 ? 0.5 : 1,
+                    cursor:
+                      selectedItems.length === 0 ? "not-allowed" : "pointer",
+                  }}
+                >
+                  🚀 Kirim Pre-Order via WhatsApp
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </section>
@@ -1130,7 +1506,8 @@ const Home: React.FC = () => {
             <div>
               <h3 className="section-title-left">Ada Pertanyaan?</h3>
               <p className="contact-description">
-                Jangan ragu untuk menghubungi kami. Tim Mansookie siap membantu kamu dengan respons cepat dan ramah.
+                Jangan ragu untuk menghubungi kami. Tim Mansookie siap membantu
+                kamu dengan respons cepat dan ramah.
               </p>
 
               <div className="contact-items">
@@ -1170,10 +1547,20 @@ const Home: React.FC = () => {
               <div className="social-links">
                 <h4>Ikuti Kami</h4>
                 <div className="social-icons">
-                  <a href="https://instagram.com" className="social-icon" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href="https://www.instagram.com/sweetmansookie?igsh=MWtib3lzN3EydXBibw=="
+                    className="social-icon"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     📸 Instagram
                   </a>
-                  <a href="https://tiktok.com" className="social-icon" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href="https://tiktok.com"
+                    className="social-icon"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     🎵 TikTok
                   </a>
                 </div>
@@ -1182,10 +1569,7 @@ const Home: React.FC = () => {
 
             <div className="contact-form-container">
               <h3>Kirim Pesan</h3>
-              <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                e.preventDefault();
-                alert('Terima kasih sudah mengirim pesan! Kami akan segera merespon.');
-              }}>
+              <form onSubmit={handleFormSubmit}>
                 <div className="form-group">
                   <label htmlFor="contact-name">Nama</label>
                   <input
@@ -1231,7 +1615,10 @@ const Home: React.FC = () => {
         <div className="footer-content">
           <div className="footer-section">
             <div className="footer-brand">@mansookie</div>
-            <p>Cookies terenak dengan bahan premium dan cinta untuk menemani momen spesial kamu.</p>
+            <p>
+              Cookies terenak dengan bahan premium dan cinta untuk menemani
+              momen spesial kamu.
+            </p>
           </div>
 
           <div className="footer-section">
