@@ -43,14 +43,6 @@ const Contact: React.FC = () => {
                 </div>
               </div>
 
-              {/* <div className="contact-item">
-                <span className="contact-icon">📧</span>
-                <div>
-                  <h4>Email</h4>
-                  <p>{COMPANY_INFO.email}</p>
-                </div>
-              </div> */}
-
               <div className="contact-item">
                 <span className="contact-icon">📍</span>
                 <div>
@@ -71,13 +63,38 @@ const Contact: React.FC = () => {
             <div className="social-links">
               <h4>Ikuti Kami</h4>
               <div className="social-icons">
-                <a
+               <a
+                
                   href="https://www.instagram.com/sweetmansookie?igsh=MWtib3lzN3EydXBibw=="
-                  className="social-icon"
+                  className="social-icon instagram-btn"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  📸 Instagram
+                  <svg
+                    className="instagram-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      x="2"
+                      y="2"
+                      width="20"
+                      height="20"
+                      rx="5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <circle cx="18" cy="6" r="1.5" fill="currentColor" />
+                  </svg>
+                  <span>@sweetmansookie</span>
                 </a>
               </div>
             </div>
