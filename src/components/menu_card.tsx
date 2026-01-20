@@ -1,15 +1,28 @@
 import React from "react";
-import type { MenuItem } from "../types/index";
+import type { MenuItem, SelectedItem } from "../types/index";
 
 interface MenuCardProps {
   item: MenuItem;
-  isInCart: boolean;
+  selectedItems: SelectedItem[];
   onToggle: (item: MenuItem) => void;
 }
 
-const MenuCard: React.FC<MenuCardProps> = ({ item, isInCart, onToggle }) => {
+const MenuCard: React.FC<MenuCardProps> = ({ item, selectedItems, onToggle }) => {
+  // Cek apakah ada item dari produk yang sama di keranjang
+  const itemsInCart = selectedItems.filter((i) => i.id === item.id);
+  const hasItemInCart = itemsInCart.length > 0;
+
   return (
-    <div className="menu-card">
+    <div className={`menu-card ${hasItemInCart ? "has-in-cart" : ""}`}>
+      {/* Badge Item di Keranjang */}
+      {hasItemInCart && (
+        <div className="menu-cart-indicator">
+          <span className="indicator-badge">
+            ✓ {itemsInCart.length} di Keranjang
+          </span>
+        </div>
+      )}
+
       <div className="menu-image">
         {item.image ? (
           <img
@@ -45,10 +58,10 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, isInCart, onToggle }) => {
             <span className="unit">/pcs</span>
           </div>
           <button
-            className={`btn-add ${isInCart ? "active" : ""}`}
+            className="btn-add"
             onClick={() => onToggle(item)}
           >
-            {isInCart ? "✓ Ada di Keranjang" : "+ Pilih"}
+            + Pilih
           </button>
         </div>
       </div>

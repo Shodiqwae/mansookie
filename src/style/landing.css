@@ -246,6 +246,11 @@
 
 /* Extra Small - dibawah 480px */
 @media (max-width: 479px) {
+  .indicator-badge {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
   .preorder-section {
     padding: 30px 15px;
   }
@@ -864,16 +869,58 @@
 }
 
 .menu-card {
+  position: relative;
   background: white;
   border-radius: 20px;
   overflow: hidden;
   transition: all 0.3s ease;
-  border: 1px solid #f5ede3;
+  border: 2px solid #f5ede3;
 }
 
+.menu-card.has-in-cart {
+  border-color: #00b894;
+  box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.1);
+}
+
+/* Badge Indicator Item di Keranjang */
+.menu-cart-indicator {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+}
+
+.indicator-badge {
+  display: inline-block;
+  background-color: #00b894;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+  animation: slideInFromLeft 0.3s ease;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hover Effect */
 .menu-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.menu-card:hover .menu-item-image {
+  transform: scale(1.05);
 }
 
 /* ==========================================
@@ -1039,10 +1086,6 @@
 .btn-add:hover {
   background-color: #e63e00;
   transform: scale(1.05);
-}
-
-.btn-add.active {
-  background-color: #00b894;
 }
 
 .preorder-section {
@@ -1497,6 +1540,15 @@
 }
 
 @media (max-width: 768px) {
+  .indicator-badge {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .menu-cart-indicator {
+    top: 10px;
+    left: 10px;
+  }
   .header {
     flex-direction: column;
     gap: 20px;

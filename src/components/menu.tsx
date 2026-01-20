@@ -11,7 +11,8 @@ interface MenuProps {
 
 const Menu: React.FC<MenuProps> = ({ selectedItems, onAddToCart }) => {
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
-  const [selectedItemForSize, setSelectedItemForSize] = useState<MenuItem | null>(null);
+  const [selectedItemForSize, setSelectedItemForSize] =
+    useState<MenuItem | null>(null);
 
   const handleToggleMenuItem = (item: MenuItem): void => {
     setSizeModalOpen(true);
@@ -49,7 +50,7 @@ const Menu: React.FC<MenuProps> = ({ selectedItems, onAddToCart }) => {
               <MenuCard
                 key={item.id}
                 item={item}
-                isInCart={!!selectedItems.find((i) => i.id === item.id)}
+                selectedItems={selectedItems}
                 onToggle={handleToggleMenuItem}
               />
             ))}
