@@ -15,8 +15,8 @@ export const menuItems: MenuItem[] = [
     badgeColor: "original",
     image: original,
     sizes: [
-      { id: "small", label: "Small (4 pcs)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (6 pcs)", priceMultiplier: 1.6 },
+      { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.6 },
     ],
   },
   {
@@ -29,8 +29,8 @@ export const menuItems: MenuItem[] = [
     badgeColor: "bestseller",
     image: cooklat,
     sizes: [
-      { id: "small", label: "Small (4 pcs)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (6 pcs)", priceMultiplier: 1.5 },
+      { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5 },
     ],
   },
   {
@@ -42,7 +42,7 @@ export const menuItems: MenuItem[] = [
     badge: "PREMIUM",
     badgeColor: "bestseller",
     image: relvelvet,
-    sizes: [{ id: "medium", label: "Medium (6 pcs)", priceMultiplier: 1 }],
+    sizes: [{ id: "medium", label: "Medium (60 gram)", priceMultiplier: 1 }],
   },
   {
     id: 4,
@@ -54,8 +54,8 @@ export const menuItems: MenuItem[] = [
     badgeColor: "new",
     image: redorivel,
     sizes: [
-      { id: "small", label: "Small (4 pcs)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (6 pcs)", priceMultiplier: 1.5 },
+      { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5 },
     ],
   },
   {
@@ -67,8 +67,8 @@ export const menuItems: MenuItem[] = [
     badge: "NEW",
     badgeColor: "new",
     sizes: [
-      { id: "small", label: "Small (4 pcs)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (6 pcs)", priceMultiplier: 1.5 },
+      { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5 },
     ],
   },
 ];
