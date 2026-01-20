@@ -1,9 +1,15 @@
 import React from "react";
 import { scrollToElement } from "../utils/scrol_util";
+import logoImage from "../assets/icons/logo.jpeg";
 
 const Header: React.FC = () => {
   return (
     <header className="header">
+      <div className="logo-container">
+        <img src={logoImage} alt="Mansookie Logo" className="logo-image" />
+        <span className="logo-text">Mansookie</span>
+      </div>
+      
       <nav className="nav">
         <a onClick={() => scrollToElement("home")} className="nav-link">
           Home
