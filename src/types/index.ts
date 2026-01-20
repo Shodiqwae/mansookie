@@ -15,8 +15,3 @@ export interface SelectedItem extends MenuItem {
   cartItemId: string; // Unique ID untuk kombinasi cookies + size
 }
 
-interface FormData { 
-  name: string;
-  email: string; 
-  message: string;
-}

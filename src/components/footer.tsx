@@ -1,5 +1,4 @@
 import React from "react";
-import { scrollToElement } from "../utils/scrol_util";
 import { COMPANY_INFO } from "../data/constans";
 
 const Footer: React.FC = () => {
