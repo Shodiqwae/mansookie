@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { SelectedItem } from "../types/index";
 import { calculateTotal } from "../utils/cart_util";
 import { sendPreorderToWhatsApp } from "../utils/whatsApp_utils";
+import { sendToGoogleSheets } from "../utils/excel_util";
 import CartItem from "./cartitem";
 
 interface PreOrderProps {
@@ -23,8 +24,9 @@ const PreOrder: React.FC<PreOrderProps> = ({
     address: "",
     notes: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (selectedItems.length === 0) {
@@ -32,12 +34,28 @@ const PreOrder: React.FC<PreOrderProps> = ({
       return;
     }
 
-    const total = calculateTotal(selectedItems);
-    sendPreorderToWhatsApp(selectedItems, preorderForm, total);
+    setIsSubmitting(true);
 
-    setPreorderForm({ name: "", phone: "", address: "", notes: "" });
-    onClearCart();
-    alert("Pesanan Anda akan dikirim ke WhatsApp!");
+    try {
+      const total = calculateTotal(selectedItems);
+      
+      // Kirim ke Google Sheets secara background (tidak ditampilkan ke user)
+      sendToGoogleSheets(selectedItems, preorderForm, total);
+      
+      // Kirim ke WhatsApp (ini yang ditampilkan ke user)
+      sendPreorderToWhatsApp(selectedItems, preorderForm, total);
+
+      // Reset form dan cart
+      setPreorderForm({ name: "", phone: "", address: "", notes: "" });
+      onClearCart();
+      
+      alert("Pesanan Anda akan dikirim ke WhatsApp!");
+    } catch (error) {
+      console.error("Error submitting order:", error);
+      alert("Terjadi kesalahan. Silakan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const total = calculateTotal(selectedItems);
@@ -101,6 +119,7 @@ const PreOrder: React.FC<PreOrderProps> = ({
                     setPreorderForm({ ...preorderForm, name: e.target.value })
                   }
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -116,6 +135,7 @@ const PreOrder: React.FC<PreOrderProps> = ({
                     setPreorderForm({ ...preorderForm, phone: e.target.value })
                   }
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -130,6 +150,7 @@ const PreOrder: React.FC<PreOrderProps> = ({
                     setPreorderForm({ ...preorderForm, address: e.target.value })
                   }
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -143,19 +164,20 @@ const PreOrder: React.FC<PreOrderProps> = ({
                   onChange={(e) =>
                     setPreorderForm({ ...preorderForm, notes: e.target.value })
                   }
+                  disabled={isSubmitting}
                 />
               </div>
 
               <button
                 type="submit"
                 className="btn-submit"
-                disabled={selectedItems.length === 0}
+                disabled={selectedItems.length === 0 || isSubmitting}
                 style={{
-                  opacity: selectedItems.length === 0 ? 0.5 : 1,
-                  cursor: selectedItems.length === 0 ? "not-allowed" : "pointer",
+                  opacity: selectedItems.length === 0 || isSubmitting ? 0.5 : 1,
+                  cursor: selectedItems.length === 0 || isSubmitting ? "not-allowed" : "pointer",
                 }}
               >
-                🚀 Kirim Pre-Order via WhatsApp
+                {isSubmitting ? "⏳ Mengirim..." : "🚀 Kirim Pre-Order via WhatsApp"}
               </button>
             </form>
           </div>

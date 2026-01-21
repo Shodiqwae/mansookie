@@ -48,6 +48,7 @@ const Hero: React.FC = () => {
           <div className="crumb crumb-2"></div>
           <div className="crumb crumb-3"></div>
           <div className="crumb crumb-4"></div>
+          <div className="crumb crumb-5"></div>
         </div>
       </div>
     </section>
