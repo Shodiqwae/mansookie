@@ -42,9 +42,9 @@ export const sendToGoogleSheets = async (
 
     // URL Google Apps Script Web App
     // Ganti dengan URL deployment Google Apps Script Anda
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOVF2mD-HsyWj4vqrtoGCf3XE2Tz9UxJo8UpPuiwrx01bvFc19NzbNwmStA1DEmRnk/exec";
+    const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
+    await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors", // Penting untuk Google Apps Script
       headers: {
