@@ -3,6 +3,7 @@ import cooklat from "../assets/image/coklat-c.jpeg";
 import original from "../assets/image/original-c.jpeg";
 import relvelvet from "../assets/image/redvelvet-c.jpeg";
 import redorivel from "../assets/image/red-ori-c.jpeg";
+import matcha from "../assets/image/matcha_cukis.jpeg";
 
 export const menuItems: MenuItem[] = [
   {
@@ -71,6 +72,7 @@ export const menuItems: MenuItem[] = [
     active: true,
     badge: "NEW",
     badgeColor: "new",
+    image: matcha,
     sizes: [
       { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
       { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5, discountPercentage: 12 },
