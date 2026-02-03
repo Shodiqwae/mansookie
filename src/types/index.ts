@@ -3,10 +3,10 @@ export interface MenuItem {
   name: string;
   description: string;
   price: number;
-  active: boolean; // Indicates if item is available
+  active: boolean; 
   badge?: string;
   badgeColor?: string;
-  image?: string; // optional image filename
+  image?: string; 
   sizes: Array<{ id: string; label: string; priceMultiplier: number; discountPercentage?: number }>;
 }
 
