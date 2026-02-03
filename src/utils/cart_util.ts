@@ -4,7 +4,14 @@ export const calculateTotal = (selectedItems: SelectedItem[]): number => {
   return selectedItems.reduce((total, item) => {
     const size = item.sizes.find((s) => s.id === item.selectedSize);
     const multiplier = size ? size.priceMultiplier : 1;
-    return total + item.price * multiplier * item.quantity;
+    const basePrice = item.price * multiplier;
+    
+    let finalPrice = basePrice;
+    if (size && size.discountPercentage) {
+      finalPrice = basePrice - (basePrice * size.discountPercentage) / 100;
+    }
+    
+    return total + finalPrice * item.quantity;
   }, 0);
 };
 

@@ -11,12 +11,13 @@ export const menuItems: MenuItem[] = [
     description:
       "Cookies tipe klasik renyah di luar lembut di dalam, dengan rasa manis pas dan cocok dinikmati bersama minuman hangat.",
     price: 5000,
+    active: true,
     badge: "Original",
     badgeColor: "original",
     image: original,
     sizes: [
       { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.6 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.6, discountPercentage: 12 },
     ],
   },
   {
@@ -25,12 +26,13 @@ export const menuItems: MenuItem[] = [
     description:
       "Cookies choco dengan rasa manis pahit yang seimbang, renyah di luar, lembut di dalam, dan cocok untuk pencinta cokelat.",
     price: 6000,
+    active: true,
     badge: "BESTSELLER",
     badgeColor: "bestseller",
     image: cooklat,
     sizes: [
       { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5, discountPercentage: 12 },
     ],
   },
   {
@@ -39,6 +41,7 @@ export const menuItems: MenuItem[] = [
     description:
       "Cookies red velvet renyah di luar dan lembut di dalam, dengan marshmallow leleh ringan yang memberi manis seimbang dan tidak berlebihan.",
     price: 11000,
+    active: false,
     badge: "PREMIUM",
     badgeColor: "bestseller",
     image: relvelvet,
@@ -50,6 +53,7 @@ export const menuItems: MenuItem[] = [
     description:
       "Cookies Red Velvet dengan warna merah yang menggoda, renyah di luar, lembut di dalam, dan manisnya pas bikin nagih.",
     price: 6000,
+    active: false,
     badge: "NEW",
     badgeColor: "new",
     image: redorivel,
@@ -64,11 +68,12 @@ export const menuItems: MenuItem[] = [
     description:
       "Cookies matcha ini renyah di luar, lembut dan chewy di dalam, dengan aroma teh hijau yang harum dan rasa manis pahit yang seimbang.",
     price: 6000,
+    active: true,
     badge: "NEW",
     badgeColor: "new",
     sizes: [
       { id: "small", label: "Small (40 gram)", priceMultiplier: 1 },
-      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5 },
+      { id: "medium", label: "Medium (60 gram)", priceMultiplier: 1.5, discountPercentage: 12 },
     ],
   },
 ];

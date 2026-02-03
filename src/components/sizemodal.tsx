@@ -14,7 +14,10 @@ const SizeModal: React.FC<SizeModalProps> = ({ item, onClose, onSelectSize }) =>
         <h3>Pilih Ukuran - {item.name}</h3>
         <div className="size-options">
           {item.sizes.map((size) => {
-            const finalPrice = item.price * size.priceMultiplier;
+            const basePrice = item.price * size.priceMultiplier;
+            const discountAmount = size.discountPercentage ? (basePrice * size.discountPercentage) / 100 : 0;
+            const finalPrice = basePrice - discountAmount;
+            
             return (
               <button
                 key={size.id}
@@ -23,7 +26,23 @@ const SizeModal: React.FC<SizeModalProps> = ({ item, onClose, onSelectSize }) =>
               >
                 <div className="size-label">{size.label}</div>
                 <div className="size-price">
-                  Rp{Math.round(finalPrice).toLocaleString("id-ID")}
+                  {size.discountPercentage ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                      <span style={{ textDecoration: 'line-through', fontSize: '0.8em', color: '#999' }}>
+                         Rp{Math.round(basePrice).toLocaleString("id-ID")}
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75em', color: '#DC2626', marginRight: '4px', background: '#FEE2E2', padding: '1px 4px', borderRadius: '4px' }}>
+                          -{size.discountPercentage}%
+                        </span>
+                        <span style={{ color: '#DC2626', fontWeight: 'bold' }}>
+                           Rp{Math.round(finalPrice).toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <span>Rp{Math.round(basePrice).toLocaleString("id-ID")}</span>
+                  )}
                 </div>
               </button>
             );

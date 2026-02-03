@@ -51,17 +51,19 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, selectedItems, onToggle }) =>
         <h3>{item.name}</h3>
         <p>{item.description}</p>
         <div className="menu-footer">
-          <div className="menu-price">
-            <span className="price">
-              Rp{item.price.toLocaleString("id-ID")}
-            </span>
-            <span className="unit">/pcs</span>
-          </div>
+            <div className="menu-price">
+              <span className="price">
+                Rp{item.price.toLocaleString("id-ID")}
+              </span>
+              <span className="unit">/pcs</span>
+            </div>
           <button
-            className="btn-add"
-            onClick={() => onToggle(item)}
+            className={`btn-add ${!item.active ? 'disabled' : ''}`}
+            onClick={() => item.active && onToggle(item)}
+            disabled={!item.active}
+            style={!item.active ? { opacity: 0.5, cursor: 'not-allowed', background: '#ccc' } : {}}
           >
-            + Pilih
+            {item.active ? "+ Pilih" : "Habis"}
           </button>
         </div>
       </div>

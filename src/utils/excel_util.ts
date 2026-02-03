@@ -20,10 +20,19 @@ export const sendToGoogleSheets = async (
         const size = item.sizes.find((s) => s.id === item.selectedSize);
         const sizeLabel = size?.label || "";
         const multiplier = size?.priceMultiplier || 1;
-        const itemPrice = item.price * multiplier;
-        const subtotal = itemPrice * item.quantity;
+        const basePrice = item.price * multiplier;
         
-        return `${item.name} - ${sizeLabel} (${item.quantity}x) = Rp${subtotal.toLocaleString("id-ID")}`;
+        let finalPrice = basePrice;
+        let discountInfo = "";
+        
+        if (size && size.discountPercentage) {
+            finalPrice = basePrice - (basePrice * size.discountPercentage) / 100;
+            discountInfo = ` (Disc ${size.discountPercentage}%)`;
+        }
+
+        const subtotal = finalPrice * item.quantity;
+        
+        return `${item.name} - ${sizeLabel}${discountInfo} (${item.quantity}x) = Rp${subtotal.toLocaleString("id-ID")}`;
       })
       .join(" | ");
 

@@ -10,8 +10,17 @@ export const sendPreorderToWhatsApp = (
     .map((item) => {
       const size = item.sizes.find((s) => s.id === item.selectedSize);
       const multiplier = size?.priceMultiplier || 1;
-      const itemPrice = Math.round(item.price * multiplier);
-      return `• ${item.name} - ${size?.label} (${item.quantity}x) - Rp${(itemPrice * item.quantity).toLocaleString("id-ID")}`;
+      const basePrice = item.price * multiplier;
+      
+      let finalPrice = basePrice;
+      let discountText = "";
+      
+      if (size && size.discountPercentage) {
+        finalPrice = basePrice - (basePrice * size.discountPercentage) / 100;
+        discountText = ` (Disc ${size.discountPercentage}%)`;
+      }
+
+      return `• ${item.name} - ${size?.label}${discountText} (${item.quantity}x) - Rp${(finalPrice * item.quantity).toLocaleString("id-ID")}`;
     })
     .join("\n");
 
