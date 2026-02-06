@@ -4,6 +4,7 @@ import { calculateTotal } from "../utils/cart_util";
 import { sendPreorderToWhatsApp } from "../utils/whatsApp_utils";
 import { sendToGoogleSheets } from "../utils/excel_util";
 import CartItem from "./cartitem";
+import PaymentModal from "./payment_modal";
 
 interface PreOrderProps {
   selectedItems: SelectedItem[];
@@ -25,25 +26,57 @@ const PreOrder: React.FC<PreOrderProps> = ({
     notes: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (selectedItems.length === 0) {
       alert("Silakan pilih menu terlebih dahulu!");
       return;
     }
+    
+    setShowPaymentModal(true);
+  };
 
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handlePaymentConfirm = async (method: "QRIS" | "Cash", proofFile: File | null) => {
     setIsSubmitting(true);
+    setShowPaymentModal(false);
 
     try {
       const total = calculateTotal(selectedItems);
+      let paymentProof = "";
+
+      if (proofFile) {
+        try {
+          paymentProof = await fileToBase64(proofFile);
+        } catch (err) {
+          console.error("Error converting file to base64", err);
+          alert("Gagal memproses gambar bukti pembayaran. Lanjut tanpa gambar.");
+        }
+      }
+
+      const submissionData = {
+        ...preorderForm,
+        paymentMethod: method,
+        paymentProof: paymentProof
+      };
       
       // Kirim ke Google Sheets secara background (tidak ditampilkan ke user)
-      sendToGoogleSheets(selectedItems, preorderForm, total);
+      // Note: Sending large Base64 strings to Google Sheets via GAS might hit limits or be slow.
+      sendToGoogleSheets(selectedItems, submissionData, total);
       
       // Kirim ke WhatsApp (ini yang ditampilkan ke user)
-      sendPreorderToWhatsApp(selectedItems, preorderForm, total);
+      sendPreorderToWhatsApp(selectedItems, preorderForm, total, method);
 
       // Reset form dan cart
       setPreorderForm({ name: "", phone: "", address: "", notes: "" });
@@ -177,12 +210,19 @@ const PreOrder: React.FC<PreOrderProps> = ({
                   cursor: selectedItems.length === 0 || isSubmitting ? "not-allowed" : "pointer",
                 }}
               >
-                {isSubmitting ? "⏳ Mengirim..." : "🚀 Kirim Pre-Order via WhatsApp"}
+                {isSubmitting ? "⏳ Mengirim..." : "🚀 Lanjut Pembayaran"}
               </button>
             </form>
           </div>
         </div>
       </div>
+      
+      <PaymentModal 
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onConfirm={handlePaymentConfirm}
+        total={total}
+      />
     </section>
   );
 };

@@ -6,6 +6,8 @@ interface PreorderData {
   phone: string;
   address: string;
   notes: string;
+  paymentMethod?: string;
+  paymentProof?: string; // Base64 string for image
 }
 
 export const sendToGoogleSheets = async (
@@ -14,7 +16,6 @@ export const sendToGoogleSheets = async (
   total: number
 ): Promise<boolean> => {
   try {
-    // Format data pesanan
     const orderDetails = selectedItems
       .map((item) => {
         const size = item.sizes.find((s) => s.id === item.selectedSize);
@@ -36,7 +37,6 @@ export const sendToGoogleSheets = async (
       })
       .join(" | ");
 
-    // Data yang akan dikirim ke Google Sheets
     const formData = {
       timestamp: new Date().toLocaleString("id-ID", {
         timeZone: "Asia/Jakarta",
@@ -47,28 +47,28 @@ export const sendToGoogleSheets = async (
       orderDetails: orderDetails,
       total: total,
       notes: preorderData.notes || "-",
+      paymentMethod: preorderData.paymentMethod || "-",
+      paymentProof: preorderData.paymentProof || "-",
     };
 
-    // URL Google Apps Script Web App
-    // Ganti dengan URL deployment Google Apps Script Anda
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOVF2mD-HsyWj4vqrtoGCf3XE2Tz9UxJo8UpPuiwrx01bvFc19NzbNwmStA1DEmRnk/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGmUF4vrvBmSb1kDFNjfQox0D0Nk-8pNyz3s-IJ2PTj9_ku4Kl5e3mzEzc6mQdhWWriQ/exec";
 
-     await fetch(GOOGLE_SCRIPT_URL, {
+    // ✅ HAPUS mode: "no-cors"
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
-      mode: "no-cors", // Penting untuk Google Apps Script
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "text/plain", // ✅ Ubah ke text/plain untuk bypass CORS preflight
       },
       body: JSON.stringify(formData),
     });
 
-    // Karena mode no-cors, kita tidak bisa membaca response
-    // Tapi request tetap terkirim
-    console.log("Data sent to Google Sheets successfully");
+    // Cek response (optional, tapi bagus untuk debugging)
+    const result = await response.json();
+    console.log("Google Sheets response:", result);
+    
     return true;
   } catch (error) {
     console.error("Error sending to Google Sheets:", error);
-    // Tetap return true agar tidak mengganggu flow WhatsApp
-    return true;
+    return false; // ⚠️ Return false jika gagal, tapi tetap lanjutkan WhatsApp
   }
 };

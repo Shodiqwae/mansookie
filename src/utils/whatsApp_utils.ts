@@ -4,7 +4,8 @@ import { WHATSAPP_NUMBER } from "../data/constans";
 export const sendPreorderToWhatsApp = (
   selectedItems: SelectedItem[],
   preorderForm: { name: string; phone: string; address: string; notes: string },
-  total: number
+  total: number,
+  paymentMethod: string
 ) => {
   const orderList = selectedItems
     .map((item) => {
@@ -24,12 +25,20 @@ export const sendPreorderToWhatsApp = (
     })
     .join("\n");
 
+  let paymentNote = "";
+  if (paymentMethod === "QRIS") {
+    paymentNote = "\n📌 *Info Pembayaran:* QRIS (Sudah mengupload bukti transfer)";
+  } else {
+    paymentNote = "\n📌 *Info Pembayaran:* Cash (COD)";
+  }
+
   const whatsappMessage = `🍪 *PRE-ORDER MANSOOKIE* 🍪
 
 📝 *Detail Pesanan:*
 ${orderList}
 
 💰 *Total: Rp${total.toLocaleString("id-ID")}*
+${paymentNote}
 
 👤 *Data Pemesan:*
 Nama: ${preorderForm.name}
