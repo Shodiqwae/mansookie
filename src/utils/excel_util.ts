@@ -51,7 +51,7 @@ export const sendToGoogleSheets = async (
       paymentProof: preorderData.paymentProof || "-",
     };
 
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGmUF4vrvBmSb1kDFNjfQox0D0Nk-8pNyz3s-IJ2PTj9_ku4Kl5e3mzEzc6mQdhWWriQ/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEOtGxjII8p1hTNXJR-jX_98qAvcDJls3nTHbStG-cdX7hXHitfkkRUks6vyredQHRwA/exec";
 
     // ✅ HAPUS mode: "no-cors"
     const response = await fetch(GOOGLE_SCRIPT_URL, {
